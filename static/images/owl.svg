@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7B2CBF" />
+      <stop offset="100%" stop-color="#3C096C" />
+    </linearGradient>
+    <linearGradient id="bellyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E0AAFF" />
+      <stop offset="100%" stop-color="#C77DFF" />
+    </linearGradient>
+    <linearGradient id="eyeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F3E8FF" />
+    </linearGradient>
+    <linearGradient id="beakGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFB703" />
+      <stop offset="100%" stop-color="#FB8500" />
+    </linearGradient>
+    <linearGradient id="wingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5A189A" />
+      <stop offset="100%" stop-color="#240046" />
+    </linearGradient>
+    <!-- Soft Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Feet / Talons -->
+  <ellipse cx="80" cy="182" rx="12" ry="7" fill="#FB8500" />
+  <ellipse cx="120" cy="182" rx="12" ry="7" fill="#FB8500" />
+
+  <!-- Main Body -->
+  <ellipse cx="100" cy="115" rx="68" ry="72" fill="url(#bodyGrad)" filter="url(#glow)" />
+
+  <!-- Ear Tufts / Feathers -->
+  <polygon points="50,60 35,25 72,48" fill="#5A189A" />
+  <polygon points="150,60 165,25 128,48" fill="#5A189A" />
+
+  <!-- Wings -->
+  <path d="M 33 110 C 25 135, 45 160, 60 155 C 50 140, 45 120, 33 110 Z" fill="url(#wingGrad)" />
+  <path d="M 167 110 C 175 135, 155 160, 140 155 C 150 140, 155 120, 167 110 Z" fill="url(#wingGrad)" />
+
+  <!-- Belly -->
+  <ellipse cx="100" cy="130" rx="42" ry="46" fill="url(#bellyGrad)" />
+  
+  <!-- Belly Feather Patterns (Cute crescents) -->
+  <path d="M 90 115 Q 100 122 110 115" stroke="#7B2CBF" stroke-width="3" stroke-linecap="round" fill="none" />
+  <path d="M 80 130 Q 90 137 100 130" stroke="#7B2CBF" stroke-width="3" stroke-linecap="round" fill="none" />
+  <path d="M 100 130 Q 110 137 120 130" stroke="#7B2CBF" stroke-width="3" stroke-linecap="round" fill="none" />
+  <path d="M 90 145 Q 100 152 110 145" stroke="#7B2CBF" stroke-width="3" stroke-linecap="round" fill="none" />
+
+  <!-- Eye Sockets (Dark outer ring) -->
+  <circle cx="72" cy="85" r="28" fill="#240046" />
+  <circle cx="128" cy="85" r="28" fill="#240046" />
+
+  <!-- Eyes White -->
+  <circle cx="72" cy="85" r="24" fill="url(#eyeGrad)" />
+  <circle cx="128" cy="85" r="24" fill="url(#eyeGrad)" />
+
+  <!-- Pupils -->
+  <circle cx="75" cy="85" r="14" fill="#10002B" />
+  <circle cx="125" cy="85" r="14" fill="#10002B" />
+
+  <!-- Eye Highlights (Cute sparkle) -->
+  <circle cx="72" cy="80" r="5" fill="#FFFFFF" />
+  <circle cx="78" cy="88" r="2.5" fill="#FFFFFF" />
+  <circle cx="122" cy="80" r="5" fill="#FFFFFF" />
+  <circle cx="128" cy="88" r="2.5" fill="#FFFFFF" />
+
+  <!-- Cute Rosy Cheeks -->
+  <ellipse cx="48" cy="106" rx="8" ry="5" fill="#FF70A6" opacity="0.6" />
+  <ellipse cx="152" cy="106" rx="8" ry="5" fill="#FF70A6" opacity="0.6" />
+
+  <!-- Beak -->
+  <polygon points="100,88 90,105 110,105" fill="url(#beakGrad)" />
+
+  <!-- Cute Star on Head -->
+  <path d="M 100 35 L 102 41 L 108 42 L 103 46 L 105 52 L 100 48 L 95 52 L 97 46 L 92 42 L 98 41 Z" fill="#FFD166" />
+</svg>

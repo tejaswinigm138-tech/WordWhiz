@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WordWhiz 🌙 | Interactive Spelling & Pronunciation Tutor</title>
+
+  <!-- Google Fonts for Modern, Child-Friendly Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Canvas Confetti Library for Celebratory Feedback -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="night-theme">
+
+  <!-- Dynamic Stars Container for Parallax Twinkle Background -->
+  <div id="stars-layer" class="stars-layer" aria-hidden="true"></div>
+
+  <!-- Glowing Moon Graphic -->
+  <div class="glowing-moon" id="moon" aria-label="Glowing Moon" role="img">
+    <div class="moon-crater c1"></div>
+    <div class="moon-crater c2"></div>
+    <div class="moon-crater c3"></div>
+    <div class="moon-glow-ring"></div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="brand">
+      <span class="brand-icon">🦉</span>
+      <span class="brand-name">WordWhiz<span class="brand-accent">.</span></span>
+      <span class="brand-tag">🌙 Night Mode</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#welcome-section" class="nav-item active">Home</a>
+      <a href="#tutor-section" class="nav-item">Spelling & Voice</a>
+      <a href="#quiz-section" class="nav-item">Spelling Quiz</a>
+      <a href="#score-section" class="nav-item">Dashboard</a>
+      <a href="#about-section" class="nav-item">About</a>
+    </nav>
+    <div class="sound-status-pill" id="soundStatusPill" title="Speech Synthesis Status">
+      <span class="dot"></span>
+      <span class="text">British Voice 🇬🇧 Active</span>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- 1. HOME / WELCOME HERO SECTION -->
+    <section id="welcome-section" class="section hero-section">
+      <div class="hero-content">
+        <div class="hero-badge">✨ Fun & Interactive Learning for Kids</div>
+        <h1 class="hero-title">
+          Master English Spellings & <span class="highlight-text">British Pronunciation</span>
+        </h1>
+        <p class="hero-subtitle">
+          Say goodbye to spelling mistakes! Speak into the magic microphone, type tricky words, listen to native British pronunciation, and challenge yourself with fun quizzes.
+        </p>
+        <div class="hero-actions">
+          <a href="#tutor-section" class="btn btn-primary btn-glow">🚀 Start Practicing Now</a>
+          <a href="#quiz-section" class="btn btn-secondary">🎯 Play Spelling Quiz</a>
+        </div>
+      </div>
+
+      <!-- Owl Mascot Card with Speech Bubble -->
+      <div class="mascot-wrapper">
+        <div class="mascot-bubble" id="mascotBubble">
+          <p id="mascotMessage">"Hoo-hoo! I'm Barnaby the Whiz Owl. Type or say a word, and let's explore it together!"</p>
+        </div>
+        <div class="mascot-character" id="owlMascot" title="Click Barnaby to hear him say hello!">
+          <img src="{{ url_for('static', filename='images/owl.svg') }}" alt="Barnaby the Owl Mascot" class="owl-svg">
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 & 3 & 4. SPELLING CHECKER, VOICE INPUT & PRONUNCIATION SECTION -->
+    <section id="tutor-section" class="section tutor-section">
+      <div class="section-header">
+        <span class="section-tag">Interactive Workshop</span>
+        <h2>Spelling & Pronunciation Station</h2>
+        <p>Type a single word or a full sentence, or use the microphone to dictate your thoughts.</p>
+      </div>
+
+      <div class="tutor-card glass-card">
+        
+        <!-- Input Controls Area -->
+        <div class="input-group-wrapper">
+          <div class="input-container">
+            <span class="input-icon">✏️</span>
+            <input 
+              type="text" 
+              id="textInput" 
+              class="styled-input" 
+              placeholder="Type any word or sentence (e.g. 'defanitely', 'beutiful', 'receive')..." 
+              autocomplete="off" 
+              spellcheck="false"
+            >
+            <button id="clearBtn" class="input-action-btn clear-btn" title="Clear text">
+              ✖
+            </button>
+          </div>
+
+          <!-- Action Buttons Bar -->
+          <div class="actions-toolbar">
+            <button id="checkSpellingBtn" class="btn btn-action btn-check">
+              <span class="btn-icon">🔍</span>
+              <span class="btn-text">Check Spelling</span>
+            </button>
+
+            <button id="voiceBtn" class="btn btn-action btn-mic">
+              <span class="btn-icon mic-icon">🎤</span>
+              <span class="btn-text" id="voiceBtnText">Speak into Mic</span>
+            </button>
+
+            <button id="listenPronounceBtn" class="btn btn-action btn-listen" disabled>
+              <span class="btn-icon">🔊</span>
+              <span class="btn-text">Listen (en-GB)</span>
+            </button>
+
+            <button id="tryAgainBtn" class="btn btn-action btn-reset" style="display: none;">
+              <span class="btn-icon">🔄</span>
+              <span class="btn-text">Try Again</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Real-time Voice Transcription Indicator -->
+        <div id="voiceStatusBanner" class="voice-status-banner hidden">
+          <div class="pulse-ring"></div>
+          <span id="voiceStatusText">Listening to your voice... Speak clearly into your microphone!</span>
+        </div>
+
+        <!-- Result Feedback Card (Dynamic) -->
+        <div id="resultCard" class="result-card hidden">
+          <div class="result-header">
+            <div class="result-status-badge" id="statusBadge">Checking...</div>
+            <div class="encouraging-quote" id="encouragingQuote">"Keep going, you're learning!"</div>
+          </div>
+
+          <div class="result-comparison-grid">
+            <!-- Original Input Block -->
+            <div class="comparison-box box-original">
+              <span class="box-label">Original Text</span>
+              <div class="box-content" id="originalTextDisplay">—</div>
+            </div>
+
+            <!-- Arrow Indicator -->
+            <div class="comparison-arrow">➔</div>
+
+            <!-- Corrected / Verified Block -->
+            <div class="comparison-box box-corrected">
+              <span class="box-label">Corrected Spelling</span>
+              <div class="box-content" id="correctedTextDisplay">—</div>
+            </div>
+          </div>
+
+          <!-- Explanation & Pronunciation Tools -->
+          <div class="result-tools">
+            <div class="tool-item">
+              <span class="tool-label">Pronunciation Accent:</span>
+              <span class="tool-value">🇬🇧 British English (en-GB)</span>
+            </div>
+            <div class="speed-control-wrapper">
+              <label for="speechRate">Voice Speed:</label>
+              <select id="speechRate" class="styled-select">
+                <option value="0.75">🐢 Slow (0.75x)</option>
+                <option value="0.9" selected>🌟 Normal (0.9x - Kid Friendly)</option>
+                <option value="1.0">🐇 Fast (1.0x)</option>
+              </select>
+            </div>
+            <button id="speakResultBtn" class="btn btn-sm btn-speak">
+              🔊 Play Pronunciation
+            </button>
+          </div>
+
+          <!-- Friendly Clarification Note -->
+          <div class="friendly-note">
+            💡 <strong>Note for Young Learners:</strong> Speech recognition hears what you say; spelling correction verifies how words are written; pronunciation speaks the words accurately!
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5. INTERACTIVE SPELLING QUIZ SECTION -->
+    <section id="quiz-section" class="section quiz-section">
+      <div class="section-header">
+        <span class="section-tag">Gamified Learning</span>
+        <h2>Interactive Spelling Quiz Arena</h2>
+        <p>Listen carefully to the British audio prompt or read the clue, then spell the word!</p>
+      </div>
+
+      <div class="quiz-card glass-card">
+        
+        <!-- Quiz Progress Bar & Header -->
+        <div class="quiz-status-bar">
+          <div class="quiz-level-indicator">
+            <span class="level-badge" id="quizCategoryBadge">General Vocab</span>
+            <span class="question-counter" id="questionCounter">Question 1 of 5</span>
+          </div>
+          <div class="quiz-score-pill">
+            <span>⭐ Quiz Points:</span>
+            <strong id="quizCurrentPoints">0</strong>
+          </div>
+        </div>
+
+        <!-- Quiz Progress Fill -->
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" id="progressBarFill" style="width: 20%;"></div>
+        </div>
+
+        <!-- Quiz Active Question Container -->
+        <div id="quizQuestionBody" class="quiz-question-body">
+          <div class="clue-container">
+            <div class="clue-icon">🎧</div>
+            <div class="clue-text-block">
+              <h3 id="clueTitle">Mystery Word Audio</h3>
+              <p id="clueDescription">Click the button below to listen to the word pronounced in British English!</p>
+            </div>
+          </div>
+
+          <div class="quiz-audio-actions">
+            <button id="quizPlayAudioBtn" class="btn btn-listen-large">
+              🔊 Hear Word to Spell
+            </button>
+            <button id="quizSlowAudioBtn" class="btn btn-subtle">
+              🐢 Hear Slowly
+            </button>
+          </div>
+
+          <div class="quiz-hint-box" id="quizHintBox">
+            💡 <em>Hint:</em> <span id="quizHintText">Click 'Hear Word' to begin!</span>
+          </div>
+
+          <!-- Answer Input Area -->
+          <div class="quiz-input-wrapper">
+            <input 
+              type="text" 
+              id="quizAnswerInput" 
+              class="styled-input quiz-input" 
+              placeholder="Type your spelling here..." 
+              autocomplete="off" 
+              spellcheck="false"
+            >
+            <button id="quizSubmitBtn" class="btn btn-action btn-submit-quiz">
+              Submit Answer 🎯
+            </button>
+          </div>
+
+          <!-- Quiz Feedback Area (Revealed after answer) -->
+          <div id="quizFeedbackBox" class="quiz-feedback-box hidden">
+            <div class="feedback-icon" id="quizFeedbackIcon">🎉</div>
+            <div class="feedback-text-content">
+              <h4 id="quizFeedbackTitle">Great Job!</h4>
+              <p id="quizFeedbackMessage">You spelled it correctly!</p>
+            </div>
+            <button id="quizNextBtn" class="btn btn-primary quiz-next-btn">
+              Next Question ➔
+            </button>
+          </div>
+        </div>
+
+        <!-- Quiz Completion Screen (Shown when all questions are done) -->
+        <div id="quizCompleteScreen" class="quiz-complete-screen hidden">
+          <div class="trophy-display">🏆</div>
+          <h2>Quiz Completed!</h2>
+          <p class="complete-message" id="completeMessage">You are becoming a true Spelling Whiz!</p>
+          <div class="final-score-pill">
+            <span>Final Score:</span>
+            <span id="finalScoreDisplay">50 / 50</span>
+          </div>
+          <div class="complete-actions">
+            <button id="restartQuizBtn" class="btn btn-primary">🔄 Play Again</button>
+            <a href="#score-section" class="btn btn-secondary">📊 View Full Scoreboard</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6. SCORE DASHBOARD SECTION -->
+    <section id="score-section" class="section score-section">
+      <div class="section-header">
+        <span class="section-tag">Your Milestones</span>
+        <h2>Whiz Learning Dashboard</h2>
+        <p>Keep track of every correct word, streaks, and total learning points!</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card glass-card">
+          <div class="stat-icon icon-star">⭐</div>
+          <div class="stat-value" id="dashboardTotalScore">0</div>
+          <div class="stat-label">Total Points</div>
+          <div class="stat-subtext">+10 pts for correct spellings</div>
+        </div>
+
+        <div class="stat-card glass-card">
+          <div class="stat-icon icon-check">✅</div>
+          <div class="stat-value" id="dashboardCorrectCount">0</div>
+          <div class="stat-label">Correct Words</div>
+          <div class="stat-subtext">Words spelled flawlessly</div>
+        </div>
+
+        <div class="stat-card glass-card">
+          <div class="stat-icon icon-cross">💡</div>
+          <div class="stat-value" id="dashboardImprovedCount">0</div>
+          <div class="stat-label">Words Improved</div>
+          <div class="stat-subtext">Mistakes corrected & learned</div>
+        </div>
+
+        <div class="stat-card glass-card">
+          <div class="stat-icon icon-flame">🔥</div>
+          <div class="stat-value" id="dashboardStreak">0</div>
+          <div class="stat-label">Current Streak</div>
+          <div class="stat-subtext">Consecutive correct answers</div>
+        </div>
+      </div>
+
+      <div class="dashboard-reset-area">
+        <button id="resetScoreBtn" class="btn btn-outline-danger">
+          🗑️ Reset Score Dashboard
+        </button>
+      </div>
+    </section>
+
+    <!-- 7. ABOUT WORDWHIZ SECTION -->
+    <section id="about-section" class="section about-section">
+      <div class="section-header">
+        <span class="section-tag">Learning Guide</span>
+        <h2>About WordWhiz 🌙</h2>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-card glass-card">
+          <h3>🌟 What is WordWhiz?</h3>
+          <p>
+            WordWhiz is an interactive web platform engineered to help young students improve their English spelling, build confidence in reading, and master standard <strong>British English (Received Pronunciation)</strong>.
+          </p>
+        </div>
+
+        <div class="about-card glass-card">
+          <h3>🎯 How Spelling Correction Works</h3>
+          <p>
+            When you enter a word, our Python Flask backend leverages natural language algorithms to evaluate edit distances, common phonetic slips, and letter permutations to offer the best correction.
+          </p>
+        </div>
+
+        <div class="about-card glass-card">
+          <h3>🎙️ Speech & Voice Technology</h3>
+          <p>
+            WordWhiz uses browser-native speech recognition to convert your voice into text without sending your raw audio to third-party ad networks, preserving privacy and delivering high speed.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p>WordWhiz 🌙 • Built with Flask, Web Speech API & HTML5/CSS3</p>
+      <p class="copyright">An interactive learning environment for children.</p>
+    </div>
+  </footer>
+
+  <!-- Main Application Script -->
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
